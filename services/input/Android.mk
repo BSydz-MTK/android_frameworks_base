@@ -48,6 +48,10 @@ ifeq ($(BOARD_USE_LEGACY_TRACKPAD),true)
 LOCAL_CFLAGS += -DLEGACY_TRACKPAD
 endif
 
+ifeq ($(TOUCH_180),true)
+LOCAL_CFLAGS += -DTOUCH_180
+endif
+
 LOCAL_MODULE:= libinput
 
 LOCAL_MODULE_TAGS := optional

@@ -4213,6 +4213,37 @@ void TouchInputMapper::cookPointerData() {
             distance = 0;
         }
 
+ #ifdef TOUCH_180
+       // X and Y
+        // Adjust coords for surface orientation.
+        float x, y;
+        switch (mSurfaceOrientation) {
+        case DISPLAY_ORIENTATION_90:
+            x = float(in.y - mRawPointerAxes.y.minValue) * mYScale + mYTranslate;
+            y = float(mRawPointerAxes.x.maxValue - in.x) * mXScale + mXTranslate;
+            orientation -= M_PI_2;
+            if (orientation < - M_PI_2) {
+                orientation += M_PI;
+            }
+            break;
+        case DISPLAY_ORIENTATION_180:
+            x = float(in.x - mRawPointerAxes.x.minValue) * mXScale + mXTranslate;
+            y = float(in.y - mRawPointerAxes.y.minValue) * mYScale + mYTranslate;
+            break;
+        case DISPLAY_ORIENTATION_270:
+            x = float(mRawPointerAxes.y.maxValue - in.y) * mYScale + mYTranslate;
+            y = float(in.x - mRawPointerAxes.x.minValue) * mXScale + mXTranslate;
+            orientation += M_PI_2;
+            if (orientation > M_PI_2) {
+                orientation -= M_PI;
+            }
+            break;
+        default:
+            x = float(mRawPointerAxes.x.maxValue - in.x) * mXScale + mXTranslate;
+            y = float(mRawPointerAxes.y.maxValue - in.y) * mYScale + mYTranslate;
+            break;
+        }
+#else
         // X and Y
         // Adjust coords for surface orientation.
         float x, y;
@@ -4242,7 +4273,7 @@ void TouchInputMapper::cookPointerData() {
             y = float(in.y - mRawPointerAxes.y.minValue) * mYScale + mYTranslate;
             break;
         }
-
+#endif
         // Write output coords.
         PointerCoords& out = mCurrentCookedPointerData.pointerCoords[i];
         out.clear();
